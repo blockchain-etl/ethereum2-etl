@@ -1,0 +1,14 @@
+{
+    "head_slot": "454077",
+    "head_epoch": "14189",
+    "head_block_root": "0xdbce856a929ee64fc80830e6dd84788c010f72e4d81526b51d64aa3224abc041",
+    "finalized_slot": "453984",
+    "finalized_epoch": "14187",
+    "finalized_block_root": "0x2fa7a0508a1ba9e1c4c2d8ccff2db681d7a45eb0e56eb4beba765bfe2a9aac24",
+    "justified_slot": "454016",
+    "justified_epoch": "14188",
+    "justified_block_root": "0x1fe47bd1673a3ef4c1df075eb69111e8de3cc35ed6a51455a705433f01bb8480",
+    "previous_justified_slot": "453984",
+    "previous_justified_epoch": "14187",
+    "previous_justified_block_root": "0x2fa7a0508a1ba9e1c4c2d8ccff2db681d7a45eb0e56eb4beba765bfe2a9aac24"
+}
