@@ -1,0 +1,70 @@
+# MIT License
+#
+# Copyright (c) 2020 Evgeny Medvedev, evge.medvedev@gmail.com
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import math
+from datetime import datetime, timezone
+
+from blockchainetl_common.graph.graph_operations import OutOfBoundsError
+
+
+class Ethereum2BlockRangeService(object):
+
+    def get_block_range_for_date(self, date):
+        start_datetime = datetime.combine(date, datetime.min.time().replace(tzinfo=timezone.utc))
+        end_datetime = datetime.combine(date, datetime.max.time().replace(tzinfo=timezone.utc))
+        return self.get_block_range_for_timestamps(start_datetime.timestamp(), end_datetime.timestamp())
+
+    def get_block_range_for_timestamps(self, start_timestamp, end_timestamp):
+        start_timestamp = int(start_timestamp)
+        end_timestamp = int(end_timestamp)
+        if start_timestamp > end_timestamp:
+            raise ValueError('start_timestamp must be greater or equal to end_timestamp')
+
+        start_slot = self.get_slot_for_timestamp(start_timestamp)
+        end_slot = self.get_slot_for_timestamp(end_timestamp)
+
+        if start_slot < 0 and end_slot < 0:
+            raise OutOfBoundsError('The given timestamp range does not cover any blocks')
+
+        if start_slot < 0:
+            start_slot = 0
+
+        if end_slot < 0:
+            end_slot = 0
+
+        start_slot = int(math.ceil(start_slot))
+        end_slot = int(math.floor(end_slot))
+
+        return start_slot, end_slot
+
+    def get_slot_for_timestamp(self, timestamp):
+        # timestamp = genesisTime + slot * SECONDS_PER_SLOT
+        # slot = (timestamp - genesisTime) / SECONDS_PER_SLOT
+
+        GENESIS_TIME = 1596546008
+        SECONDS_PER_SLOT = 12
+
+        slot = (timestamp - GENESIS_TIME) / SECONDS_PER_SLOT
+
+        return slot
+
+
