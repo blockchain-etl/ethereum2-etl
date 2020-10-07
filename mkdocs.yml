@@ -1,0 +1,12 @@
+site_name: Ethereum 2.0 ETL
+nav:
+  - Overview: index.md
+  - Quickstart: quickstart.md
+  - References:
+    - Commands: commands.md
+    - Schema: schema.md
+  - Project:
+    - Contact Us: contact.md
+    - Citing: citing.md
+theme: readthedocs
+repo_url: https://github.com/blockchain-etl/ethereum2-etl/

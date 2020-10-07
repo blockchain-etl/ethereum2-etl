@@ -21,7 +21,7 @@
 
 import click
 
-from ethereum2etl.cli.export_blocks import export_blocks
+from ethereum2etl.cli.export_beacon_blocks import export_beacon_blocks
 from ethereum2etl.cli.get_block_range_for_date import get_block_range_for_date
 
 
@@ -33,7 +33,7 @@ def cli(ctx):
 
 
 # export
-cli.add_command(export_blocks, "export_blocks")
+cli.add_command(export_beacon_blocks, "export_beacon_blocks")
 
 # utils
 cli.add_command(get_block_range_for_date, "get_block_range_for_date")

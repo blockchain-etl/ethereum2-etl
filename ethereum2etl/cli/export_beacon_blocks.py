@@ -23,7 +23,7 @@
 
 import click
 
-from ethereum2etl.jobs.export_blocks_job import ExportBlocksJob
+from ethereum2etl.jobs.export_beacon_blocks_job import ExportBeaconBlocksJob
 
 from ethereum2etl.jobs.exporters.ethereum2_item_exporter import Ethereum2ItemExporter
 from ethereum2etl.api.ethereum2_teku_api import Ethereum2TekuApi
@@ -44,11 +44,11 @@ logging_basic_config()
 @click.option('-o', '--output-dir', default=None, type=str, help='The output directory for block data.')
 @click.option('-f', '--output-format', default='json', show_default=True, type=click.Choice(['json', 'csv']),
               help='The output format.')
-def export_blocks(start_block, end_block, provider_uri, max_workers, output_dir, output_format):
+def export_beacon_blocks(start_block, end_block, provider_uri, max_workers, output_dir, output_format):
     """Exports blocks, balance updates, and operations."""
 
     ethereum2_service = Ethereum2Service(ThreadLocalProxy(lambda: Ethereum2TekuApi(provider_uri)))
-    job = ExportBlocksJob(
+    job = ExportBeaconBlocksJob(
         start_block=start_block,
         end_block=end_block,
         ethereum2_service=ethereum2_service,

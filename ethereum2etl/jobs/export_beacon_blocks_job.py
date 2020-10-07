@@ -26,7 +26,7 @@ from blockchainetl_common.utils import validate_range
 
 
 # Exports blocks, balance updates and operations
-class ExportBlocksJob(BaseJob):
+class ExportBeaconBlocksJob(BaseJob):
     def __init__(
             self,
             start_block,
@@ -55,11 +55,11 @@ class ExportBlocksJob(BaseJob):
         )
 
     def _export_batch(self, block_number_batch):
-        responses = self.ethereum2_service.get_blocks(block_number_batch)
+        responses = self.ethereum2_service.get_beacon_blocks(block_number_batch)
         for response in responses:
             self.item_exporter.export_item({
                 **{
-                    'item_type': 'block'
+                    'item_type': 'beacon_block'
                 }, **response
             })
 

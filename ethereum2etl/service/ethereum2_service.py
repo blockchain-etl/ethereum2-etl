@@ -25,17 +25,11 @@ class Ethereum2Service(object):
     def __init__(self, ethereum2_teku_api):
         self.ethereum2_teku_api = ethereum2_teku_api
 
-    def get_block(self, slot):
+    def get_beacon_block(self, slot):
         return self.ethereum2_teku_api.get_beacon_block(slot)
 
-    def get_genesis_block(self):
-        return self.get_block(0)
-
-    def get_latest_block(self):
-        return self.get_block('head')
-
-    def get_blocks(self, block_number_batch):
+    def get_beacon_blocks(self, block_number_batch):
         if not block_number_batch:
             return []
 
-        return [self.get_block(x) for x in block_number_batch]
+        return [self.get_beacon_block(x) for x in block_number_batch]
