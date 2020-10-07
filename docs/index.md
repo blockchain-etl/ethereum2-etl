@@ -15,4 +15,4 @@ Easily export:
 
 ## Projects using Ethereum 2.0 ETL
 
-* [Nansen](https://nansen.ai/?ref=ethereum2etl) - Analytics platform for Ethereum
+* [Nansen](https://nansen.ai/?ref=ethereum2etl) - Blockchain analytics platform
