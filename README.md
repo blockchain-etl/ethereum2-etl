@@ -74,4 +74,4 @@ For the latest version, check out the repo and call
 ## Projects using Ethereum ETL
 
 * [Google](https://goo.gl/oY5BCQ) - Public BigQuery Ethereum datasets
-* [Nansen by D5](https://nansen.d5.ai/?ref=ethereumetl) - Analytics platform for Ethereum
+* [Nansen](https://nansen.ai/?ref=ethereum2etl) - Blockchain analytics platform
