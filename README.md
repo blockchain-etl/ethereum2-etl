@@ -5,6 +5,8 @@
 [![Telegram](https://img.shields.io/badge/telegram-join%20chat-blue.svg)](https://t.me/joinchat/GsMpbA3mv1OJ6YMp3T5ORQ)
 [![Discord](https://img.shields.io/badge/discord-join%20chat-blue.svg)](https://discord.gg/wukrezR)
 
+Work in progress!
+
 Ethereum 2.0 ETL lets you convert blockchain data into convenient formats like CSVs and relational databases.
 
 *Do you just want to query Ethereum data right away? Use the [public dataset in BigQuery](https://console.cloud.google.com/bigquery?page=dataset&d=crypto_ethereum2&p=public-data-finance).*
