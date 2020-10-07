@@ -25,6 +25,8 @@ from datetime import datetime, timezone
 
 from blockchainetl_common.graph.graph_operations import OutOfBoundsError
 
+from ethereum2etl.utils.ethereum2_utils import timestamp_to_slot
+
 
 class Ethereum2BlockRangeService(object):
 
@@ -39,8 +41,8 @@ class Ethereum2BlockRangeService(object):
         if start_timestamp > end_timestamp:
             raise ValueError('start_timestamp must be greater or equal to end_timestamp')
 
-        start_slot = self.get_slot_for_timestamp(start_timestamp)
-        end_slot = self.get_slot_for_timestamp(end_timestamp)
+        start_slot = timestamp_to_slot(start_timestamp)
+        end_slot = timestamp_to_slot(end_timestamp)
 
         if start_slot < 0 and end_slot < 0:
             raise OutOfBoundsError('The given timestamp range does not cover any blocks')
@@ -55,16 +57,5 @@ class Ethereum2BlockRangeService(object):
         end_slot = int(math.floor(end_slot))
 
         return start_slot, end_slot
-
-    def get_slot_for_timestamp(self, timestamp):
-        # timestamp = genesisTime + slot * SECONDS_PER_SLOT
-        # slot = (timestamp - genesisTime) / SECONDS_PER_SLOT
-
-        GENESIS_TIME = 1596546008
-        SECONDS_PER_SLOT = 12
-
-        slot = (timestamp - GENESIS_TIME) / SECONDS_PER_SLOT
-
-        return slot
 
 

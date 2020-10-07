@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import time
 
 from blockchainetl_common.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl_common.jobs.base_job import BaseJob
@@ -26,6 +27,10 @@ from blockchainetl_common.utils import validate_range
 
 
 # Exports blocks, balance updates and operations
+from ethereum2etl.utils.ethereum2_utils import slot_to_timestamp
+from ethereum2etl.utils.timestamp_utils import format_timestamp
+
+
 class ExportBeaconBlocksJob(BaseJob):
     def __init__(
             self,
@@ -54,14 +59,17 @@ class ExportBeaconBlocksJob(BaseJob):
             total_items=self.end_block - self.start_block + 1
         )
 
-    def _export_batch(self, block_number_batch):
-        responses = self.ethereum2_service.get_beacon_blocks(block_number_batch)
+    def _export_batch(self, slot_batch):
+        responses = self.ethereum2_service.get_beacon_blocks(slot_batch)
         for response in responses:
+            slot = response.get('beacon_block').get('message').get('slot')
             self.item_exporter.export_item({
                 **{
-                    'item_type': 'beacon_block'
+                    'item_type': 'beacon_block',
+                    'block_timestamp': format_timestamp(slot_to_timestamp(slot))
                 }, **response
             })
+            time.sleep(0.1)
 
     def _end(self):
         self.batch_work_executor.shutdown()

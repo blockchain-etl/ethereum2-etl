@@ -33,7 +33,7 @@ class Ethereum2TekuApi:
         self.timeout = timeout
 
     def get_beacon_block(self, slot):
-        return self.get('/beacon/block?slot=453954'.format(str(slot)))
+        return self.get('/beacon/block?slot={}'.format(str(slot)))
 
     def get(self, endpoint):
         raw_response = make_get_request(

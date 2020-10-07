@@ -28,8 +28,8 @@ class Ethereum2Service(object):
     def get_beacon_block(self, slot):
         return self.ethereum2_teku_api.get_beacon_block(slot)
 
-    def get_beacon_blocks(self, block_number_batch):
-        if not block_number_batch:
+    def get_beacon_blocks(self, slot_batch):
+        if not slot_batch:
             return []
 
-        return [self.get_beacon_block(x) for x in block_number_batch]
+        return [self.get_beacon_block(slot) for slot in slot_batch]
