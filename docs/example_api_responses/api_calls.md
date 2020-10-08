@@ -7,3 +7,7 @@
 
 - https://api.prylabs.net/eth/v1alpha1/beacon/blocks?slot=453954
 - https://projectid:secret@medalla.infura.io/beacon/block?slot=453954
+
+# State
+
+- https://medalla.infura.io/beacon/state?slot=0

@@ -7,6 +7,3 @@
 - Some terminology explained e.g. epoch https://medium.com/alethio/ethereum-2-0-terms-demystified-8398357429d7
 - Infura apply for Teku node access https://blog.infura.io/checking-your-eth-2-0-validator-balance/
 
-timestamp = genesisTime + slot * 12
-
-slot * SECONDS_PER_SLOT + genesis_time

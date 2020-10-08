@@ -25,7 +25,7 @@ from datetime import datetime, timezone
 
 from blockchainetl_common.graph.graph_operations import OutOfBoundsError
 
-from ethereum2etl.utils.ethereum2_utils import timestamp_to_slot
+from ethereum2etl.utils.ethereum2_utils import compute_slot_with_fractions_at_timestamp
 
 
 class Ethereum2BlockRangeService(object):
@@ -41,8 +41,8 @@ class Ethereum2BlockRangeService(object):
         if start_timestamp > end_timestamp:
             raise ValueError('start_timestamp must be greater or equal to end_timestamp')
 
-        start_slot = timestamp_to_slot(start_timestamp)
-        end_slot = timestamp_to_slot(end_timestamp)
+        start_slot = compute_slot_with_fractions_at_timestamp(start_timestamp)
+        end_slot = compute_slot_with_fractions_at_timestamp(end_timestamp)
 
         if start_slot < 0 and end_slot < 0:
             raise OutOfBoundsError('The given timestamp range does not cover any blocks')

@@ -20,30 +20,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import math
 import time
 
 from blockchainetl_common.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl_common.jobs.base_job import BaseJob
-from blockchainetl_common.utils import validate_range
-
-from ethereum2etl.utils.ethereum2_utils import compute_timestamp_at_slot, compute_epoch_at_slot
-from ethereum2etl.utils.timestamp_utils import format_timestamp
 
 
-class ExportBeaconBlocksJob(BaseJob):
+class ExportBeaconValidatorsJob(BaseJob):
     def __init__(
             self,
-            start_block,
-            end_block,
+            epoch,
             ethereum2_service,
             max_workers,
             item_exporter,
-            batch_size=1):
-        validate_range(start_block, end_block)
-        self.start_block = start_block
-        self.end_block = end_block
+            batch_size=100):
+        self.epoch = epoch
 
-        self.batch_work_executor = BatchWorkExecutor(batch_size, max_workers)
+        self.batch_size=batch_size
+        self.batch_work_executor = BatchWorkExecutor(1, max_workers)
         self.item_exporter = item_exporter
 
         self.ethereum2_service = ethereum2_service
@@ -52,24 +47,30 @@ class ExportBeaconBlocksJob(BaseJob):
         self.item_exporter.open()
 
     def _export(self):
+        validators_response = self.ethereum2_service.get_beacon_validators(self.epoch, page_number=0, page_size=1)
+        total_size = validators_response.get('total_size')
+        if total_size is None:
+            raise ValueError(f'total_size is empty in validators_response for epoch {self.epoch}')
+        total_pages = math.floor(total_size / self.batch_size)
+
         self.batch_work_executor.execute(
-            range(self.start_block, self.end_block + 1),
+            range(0, total_pages),
             self._export_batch,
-            total_items=self.end_block - self.start_block + 1
+            total_items=total_pages
         )
 
-    def _export_batch(self, slot_batch):
-        responses = self.ethereum2_service.get_beacon_blocks(slot_batch)
-        assert len(slot_batch) == len(responses)
-        for slot, response in zip(slot_batch, responses):
-            epoch = compute_epoch_at_slot(slot)
+    def _export_batch(self, validator_pages_batch):
+        assert len(validator_pages_batch) == 1
+        page_number = validator_pages_batch[0]
+
+        validators_response = self.ethereum2_service.get_beacon_validators(
+            self.epoch, page_number=page_number, page_size=self.batch_size)
+
+        for validator in validators_response.get('validators'):
             self.item_exporter.export_item({
                 **{
-                    'item_type': 'beacon_block',
-                    'block_timestamp': format_timestamp(compute_timestamp_at_slot(slot)),
-                    'epoch': epoch,
-                    'skipped': True
-                }, **(response if response is not None else {})
+                    'item_type': 'beacon_validator',
+                }, **validator
             })
             time.sleep(0.1)
 

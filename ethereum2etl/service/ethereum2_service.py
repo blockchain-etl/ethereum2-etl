@@ -28,8 +28,18 @@ class Ethereum2Service(object):
     def get_beacon_block(self, slot):
         return self.ethereum2_teku_api.get_beacon_block(slot)
 
+    def get_beacon_validators(self, epoch, page_number, page_size=100):
+        return self.ethereum2_teku_api.get_beacon_validators(epoch=epoch, page_token=page_number, page_size=page_size)
+
     def get_beacon_blocks(self, slot_batch):
         if not slot_batch:
             return []
 
-        return [self.get_beacon_block(slot) for slot in slot_batch]
+        for slot in slot_batch:
+            block_response = self.get_beacon_block(slot)
+            returned_slot = block_response.get('beacon_block').get('message').get('slot')
+            # Teku returns latest non-skipped block
+            if returned_slot != slot:
+                yield None
+            else:
+                yield block_response
