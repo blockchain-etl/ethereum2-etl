@@ -25,10 +25,11 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7'
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8'
     ],
     keywords='Ethereum, Ethereum 2.0, ETH 2.0',
-    python_requires='>=3.6.0,<3.8.0',
+    python_requires='>=3.6.0,<4',
     install_requires=[
         'blockchain-etl-common==1.3.0',
         'requests==2.20.0',
