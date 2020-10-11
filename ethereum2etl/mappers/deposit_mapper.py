@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020 Evgeny Medvedev, evge.medvedev@gmail.com
+# Copyright (c) 2018 Evgeny Medvedev, evge.medvedev@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +21,31 @@
 # SOFTWARE.
 
 
-class Ethereum2Service(object):
-    def __init__(self, ethereum2_teku_api):
-        self.ethereum2_teku_api = ethereum2_teku_api
+from ethereum2etl.domain.deposit import Deposit
+from ethereum2etl.utils.string_utils import to_int
 
-    def get_beacon_block(self, slot):
-        return self.ethereum2_teku_api.get_beacon_block(slot)
 
-    def get_beacon_validators(self, epoch, page_number, page_size=100):
-        return self.ethereum2_teku_api.get_beacon_validators(epoch=epoch, page_token=page_number, page_size=page_size)
+class DepositMapper(object):
 
-    def get_beacon_blocks(self, slot_batch):
-        if not slot_batch:
-            return []
+    def json_dict_to_deposit(self, json_dict):
+        deposit = Deposit()
 
-        for slot in slot_batch:
-            block_response = self.get_beacon_block(slot)
-            returned_slot = block_response.get('beacon_block').get('message').get('slot')
-            # Teku returns latest non-skipped block
-            if returned_slot is None or int(returned_slot) != slot:
-                yield None
-            else:
-                yield block_response
+        data = json_dict.get('data', EMPTY_OBJECT)
+
+        deposit.pubkey = data.get('pubkey')
+        deposit.withdrawal_credentials = data.get('withdrawal_credentials')
+        deposit.amount = to_int(data.get('amount'))
+        deposit.signature = data.get('signature')
+
+        return deposit
+
+    def deposit_to_dict(self, deposit: Deposit):
+        return {
+            **{
+                'item_type': 'deposit',
+            },
+            **vars(deposit)
+        }
+
+
+EMPTY_OBJECT = {}

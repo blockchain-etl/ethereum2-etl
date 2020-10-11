@@ -26,7 +26,8 @@ from blockchainetl_common.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl_common.jobs.base_job import BaseJob
 from blockchainetl_common.utils import validate_range
 
-from ethereum2etl.utils.ethereum2_utils import compute_timestamp_at_slot, compute_epoch_at_slot
+from ethereum2etl.mappers.beacon_block_mapper import BeaconBlockMapper
+from ethereum2etl.utils.ethereum2_utils import compute_time_at_slot, compute_epoch_at_slot
 from ethereum2etl.utils.timestamp_utils import format_timestamp
 
 
@@ -48,6 +49,8 @@ class ExportBeaconBlocksJob(BaseJob):
 
         self.ethereum2_service = ethereum2_service
 
+        self.beacon_block_mapper = BeaconBlockMapper()
+
     def _start(self):
         self.item_exporter.open()
 
@@ -59,18 +62,15 @@ class ExportBeaconBlocksJob(BaseJob):
         )
 
     def _export_batch(self, slot_batch):
-        responses = self.ethereum2_service.get_beacon_blocks(slot_batch)
+        responses = list(self.ethereum2_service.get_beacon_blocks(slot_batch))
         assert len(slot_batch) == len(responses)
         for slot, response in zip(slot_batch, responses):
-            epoch = compute_epoch_at_slot(slot)
-            self.item_exporter.export_item({
-                **{
-                    'item_type': 'beacon_block',
-                    'block_timestamp': format_timestamp(compute_timestamp_at_slot(slot)),
-                    'epoch': epoch,
-                    'skipped': True
-                }, **(response if response is not None else {})
-            })
+            if response is not None:
+                beacon_block = self.beacon_block_mapper.json_dict_to_beacon_block(response)
+            else:
+                beacon_block = self.beacon_block_mapper.create_skipped_beacon_block(slot)
+
+            self.item_exporter.export_item(self.beacon_block_mapper.beacon_block_to_dict(beacon_block))
             time.sleep(0.1)
 
     def _end(self):

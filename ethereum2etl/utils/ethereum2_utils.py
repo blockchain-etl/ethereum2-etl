@@ -5,7 +5,7 @@ SECONDS_PER_SLOT = 12
 SLOTS_PER_EPOCH = 32
 
 
-def compute_timestamp_at_slot(slot):
+def compute_time_at_slot(slot):
     if slot is None:
         return None
 
@@ -39,7 +39,20 @@ def compute_epoch_at_slot(slot):
     return slot // SLOTS_PER_EPOCH
 
 
+def compute_slot_at_epoch(epoch):
+    """
+    Return the epoch number at ``slot``.
+    """
+    return epoch * SLOTS_PER_EPOCH
+
+
 def compute_epoch_at_timestamp(ts):
     slot = compute_slot_at_timestamp(ts)
     epoch = compute_epoch_at_slot(slot)
     return epoch
+
+
+def compute_timestamp_at_epoch(epoch):
+    slot = compute_slot_at_epoch(epoch)
+    ts = compute_time_at_slot(slot)
+    return ts

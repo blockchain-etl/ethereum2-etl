@@ -11,3 +11,7 @@
 # State
 
 - https://medalla.infura.io/beacon/state?slot=0
+
+# Committees
+
+- https://medalla.infura.io/beacon/committees?epoch=14846

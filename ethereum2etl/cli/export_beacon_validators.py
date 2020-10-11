@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import logging
 from datetime import datetime
 
 import click
@@ -52,6 +53,8 @@ def export_beacon_validators(epoch, provider_uri, max_workers, output_dir, outpu
     if epoch is None:
         now = datetime.now()
         epoch = compute_epoch_at_timestamp(now)
+
+    logging.info(f'Epoch number is {epoch}')
 
     job = ExportBeaconValidatorsJob(
         epoch=epoch,
