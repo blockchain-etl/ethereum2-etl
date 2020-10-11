@@ -18,28 +18,26 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
-import click
+import pytest
+from dateutil.parser import parse
 
-from ethereum2etl.cli.export_beacon_committees import export_beacon_committees
-from ethereum2etl.cli.export_beacon_validators import export_beacon_validators
-from ethereum2etl.cli.export_beacon_blocks import export_beacon_blocks
-from ethereum2etl.cli.get_block_range_for_date import get_block_range_for_date
-from ethereum2etl.cli.get_epoch_range_for_date import get_epoch_range_for_date
+from ethereum2etl.service.ethereum2_epoch_range_service import Ethereum2EpochRangeService
 
 
-@click.group()
-@click.version_option(version='0.0.1')
-@click.pass_context
-def cli(ctx):
-    pass
+@pytest.mark.parametrize("date,expected_start_epoch,expected_end_epoch", [
+    ['2020-08-04', 0, 103],
+    ['2020-08-05', 104, 328],
+    ['2020-08-06', 329, 553],
+    ['2020-10-05', 13829, 14053],
+])
+def test_get_block_range_for_date(date, expected_start_epoch, expected_end_epoch):
+    ethereum2_block_range_service = get_new_ethereum2_block_range_service()
+    parsed_date = parse(date)
+    epochs = ethereum2_block_range_service.get_epoch_range_for_date(parsed_date)
+    assert (expected_start_epoch, expected_end_epoch) == epochs
 
 
-# export
-cli.add_command(export_beacon_blocks, "export_beacon_blocks")
-cli.add_command(export_beacon_validators, "export_beacon_validators")
-cli.add_command(export_beacon_committees, "export_beacon_committees")
-
-# utils
-cli.add_command(get_block_range_for_date, "get_block_range_for_date")
-cli.add_command(get_epoch_range_for_date, "get_epoch_range_for_date")
+def get_new_ethereum2_block_range_service():
+    return Ethereum2EpochRangeService()
