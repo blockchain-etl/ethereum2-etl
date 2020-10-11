@@ -31,7 +31,7 @@ setup(
     keywords='Ethereum, Ethereum 2.0, ETH 2.0',
     python_requires='>=3.6.0,<4',
     install_requires=[
-        'blockchain-etl-common==1.3.0',
+        'blockchain-etl-common==1.4.0',
         'requests==2.20.0',
         'python-dateutil==2.7.0',
         'click==7.0'
