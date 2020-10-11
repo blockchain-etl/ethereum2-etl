@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020 Evgeny Medvedev, evge.medvedev@gmail.com
+# Copyright (c) 2018 Evgeny Medvedev, evge.medvedev@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,26 +18,19 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-
-import click
-
-from ethereum2etl.cli.export_beacon_committees import export_beacon_committees
-from ethereum2etl.cli.export_beacon_validators import export_beacon_validators
-from ethereum2etl.cli.export_beacon_blocks import export_beacon_blocks
-from ethereum2etl.cli.get_block_range_for_date import get_block_range_for_date
+# SOFTWARE.
 
 
-@click.group()
-@click.version_option(version='0.0.1')
-@click.pass_context
-def cli(ctx):
-    pass
+class Validator(object):
+    def __init__(self):
+        self.pubkey = None
+        self.validator_index = None
+        self.balance = None
 
-
-# export
-cli.add_command(export_beacon_blocks, "export_beacon_blocks")
-cli.add_command(export_beacon_validators, "export_beacon_validators")
-cli.add_command(export_beacon_committees, "export_beacon_committees")
-
-# utils
-cli.add_command(get_block_range_for_date, "get_block_range_for_date")
+        self.withdrawal_credentials = None
+        self.effective_balance = None
+        self.slashed = False
+        self.activation_eligibility_epoch = None
+        self.activation_epoch = None
+        self.exit_epoch = None
+        self.withdrawable_epoch = None

@@ -31,6 +31,9 @@ class Ethereum2Service(object):
     def get_beacon_validators(self, epoch, page_number, page_size=100):
         return self.ethereum2_teku_api.get_beacon_validators(epoch=epoch, page_token=page_number, page_size=page_size)
 
+    def get_beacon_committees(self, epoch):
+        return self.ethereum2_teku_api.get_beacon_committees(epoch=epoch)
+
     def get_beacon_blocks(self, slot_batch):
         if not slot_batch:
             return []

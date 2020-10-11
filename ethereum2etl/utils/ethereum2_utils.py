@@ -1,5 +1,6 @@
 from datetime import datetime
 
+# TODO: Make it into an object with init variables
 GENESIS_TIME = 1596546008
 SECONDS_PER_SLOT = 12
 SLOTS_PER_EPOCH = 32

@@ -26,6 +26,8 @@ import time
 from blockchainetl_common.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl_common.jobs.base_job import BaseJob
 
+from ethereum2etl.mappers.validator_mapper import ValidatorMapper
+
 
 class ExportBeaconValidatorsJob(BaseJob):
     def __init__(
@@ -42,6 +44,8 @@ class ExportBeaconValidatorsJob(BaseJob):
         self.item_exporter = item_exporter
 
         self.ethereum2_service = ethereum2_service
+
+        self.validator_mapper = ValidatorMapper()
 
     def _start(self):
         self.item_exporter.open()
@@ -66,12 +70,9 @@ class ExportBeaconValidatorsJob(BaseJob):
         validators_response = self.ethereum2_service.get_beacon_validators(
             self.epoch, page_number=page_number, page_size=self.batch_size)
 
-        for validator in validators_response.get('validators'):
-            self.item_exporter.export_item({
-                **{
-                    'item_type': 'beacon_validator',
-                }, **validator
-            })
+        for validator_response in validators_response.get('validators'):
+            validator = self.validator_mapper.json_dict_to_validator(validator_response)
+            self.item_exporter.export_item(self.validator_mapper.validator_to_dict(validator))
             time.sleep(0.1)
 
     def _end(self):

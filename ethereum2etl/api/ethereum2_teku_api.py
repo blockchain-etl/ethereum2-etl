@@ -38,6 +38,9 @@ class Ethereum2TekuApi:
     def get_beacon_validators(self, epoch, page_token, page_size):
         return self.get(f'/beacon/validators?epoch={epoch}&pageToken={page_token}&pageSize={page_size}')
 
+    def get_beacon_committees(self, epoch):
+        return self.get(f'/beacon/committees?epoch={epoch}')
+
     def get(self, endpoint):
         raw_response = make_get_request(
             self.provider_uri,
