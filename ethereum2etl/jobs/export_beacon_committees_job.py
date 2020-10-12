@@ -68,7 +68,6 @@ class ExportBeaconCommitteesJob(BaseJob):
         for committee_response in committees_response:
             committee = self.committee_mapper.json_dict_to_committee(committee_response, epoch=epoch)
             self.item_exporter.export_item(self.committee_mapper.committee_to_dict(committee))
-            time.sleep(0.1)
 
     def _end(self):
         self.batch_work_executor.shutdown()

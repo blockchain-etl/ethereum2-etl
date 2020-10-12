@@ -20,31 +20,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import logging
+import threading
+import time
 
-class BeaconBlock(object):
-    def __init__(self):
-        self.block_slot = None
-        self.block_epoch = None
-        self.block_timestamp = None
-        self.proposer_index = None
 
-        self.skipped = False
+class RateLimitingProxy:
+    def __init__(self, delegate, max_per_second=5):
+        self._lock = threading.Lock()
+        self._delegate = delegate
+        self._min_interval = 1.0 / max_per_second
+        self._last_time_called = time.perf_counter()
+        self._wait_buffer = 0.001
 
-        self.block_root = None
-        self.parent_root = None
-        self.state_root = None
+    def __getattr__(self, name):
+        self._lock.acquire()
+        try:
+            elapsed = time.perf_counter() - self._last_time_called
+            left_to_wait = self._min_interval - elapsed + self._wait_buffer
+            if left_to_wait > 0:
+                logging.info(f'Waiting {left_to_wait} seconds because of rate limiting')
+                time.sleep(left_to_wait)
 
-        self.randao_reveal = None
-        self.graffiti = None
-
-        self.eth1_block_hash = None
-        self.eth1_deposit_root = None
-        self.eth1_deposit_count = None
-
-        self.signature = None
-
-        self.attestations = []
-        self.deposits = []
-        self.proposer_slashings = []
-        self.attester_slashings = []
-        self.voluntary_exits = []
+            return getattr(self._delegate, name)
+        finally:
+            self._last_time_called = time.perf_counter()
+            self._lock.release()

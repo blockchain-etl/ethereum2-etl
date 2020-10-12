@@ -41,20 +41,29 @@ class Ethereum2ItemExporter:
             raise ValueError('"item_type" key is not found in item {}'.format(repr(item)))
 
         if self.output_format == 'csv' and item_type == 'beacon_block':
-            self._export_nested_items(item, 'attestations')
-            self._export_nested_items(item, 'deposits')
-            self._export_nested_items(item, 'proposer_slashings')
-            self._export_nested_items(item, 'attester_slashings')
-            self._export_nested_items(item, 'voluntary_exits')
+            extra_fields = {
+                'block_slot': item.get('block_slot'),
+                'block_timestamp': item.get('block_timestamp'),
+            }
+            self._export_nested_items(item, 'attestations', extra_fields)
+            self._export_nested_items(item, 'deposits', extra_fields)
+            self._export_nested_items(item, 'proposer_slashings', extra_fields)
+            self._export_nested_items(item, 'attester_slashings', extra_fields)
+            self._export_nested_items(item, 'voluntary_exits', extra_fields)
 
             self.delegate.export_item(item)
         else:
             self.delegate.export_item(item)
 
-    def _export_nested_items(self, item, subitems_key):
-        for nested_item in item.get(subitems_key, EMPTY_LIST):
+    def _export_nested_items(self, item, nested_items_key, extra_fields):
+        for nested_item in item.get(nested_items_key, EMPTY_LIST):
+            if extra_fields is not None:
+                nested_item = {
+                    **nested_item,
+                    **extra_fields,
+                }
             self.delegate.export_item(nested_item)
-        del item[subitems_key]
+        del item[nested_items_key]
 
     def close(self):
         self.delegate.close()

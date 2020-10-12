@@ -47,8 +47,8 @@ class BeaconBlockMapper(object):
 
         slot = to_int(message.get('slot'))
         epoch = compute_epoch_at_slot(slot)
-        block.slot = to_int(slot)
-        block.epoch = epoch
+        block.block_slot = to_int(slot)
+        block.block_epoch = epoch
         block.block_timestamp = format_timestamp(compute_time_at_slot(slot))
         block.proposer_index = to_int(message.get('proposer_index'))
 

@@ -22,14 +22,11 @@
 
 
 import click
-
-from ethereum2etl.jobs.export_beacon_blocks_job import ExportBeaconBlocksJob
-
-from ethereum2etl.jobs.exporters.ethereum2_item_exporter import Ethereum2ItemExporter
-from ethereum2etl.api.ethereum2_teku_api import Ethereum2TekuApi
 from blockchainetl_common.logging_utils import logging_basic_config
-from blockchainetl_common.thread_local_proxy import ThreadLocalProxy
 
+from ethereum2etl.api.build_api import build_api
+from ethereum2etl.jobs.export_beacon_blocks_job import ExportBeaconBlocksJob
+from ethereum2etl.jobs.exporters.ethereum2_item_exporter import Ethereum2ItemExporter
 from ethereum2etl.service.ethereum2_service import Ethereum2Service
 
 logging_basic_config()
@@ -40,12 +37,16 @@ logging_basic_config()
 @click.option('-e', '--end-block', required=True, type=int, help='End block')
 @click.option('-p', '--provider-uri', default='https://medalla.infura.io', show_default=True, type=str,
               help='The URI of the remote Ethereum 2 node')
+@click.option('-r', '--rate-limit', default=None, show_default=True, type=int,
+              help='Maximum requests per second for provider in case it has rate limiting')
 @click.option('-w', '--max-workers', default=5, show_default=True, type=int, help='The maximum number of workers.')
 @click.option('-o', '--output-dir', default=None, type=str, help='The output directory for block data.')
 @click.option('-f', '--output-format', default='json', show_default=True, type=click.Choice(['json', 'csv']),
               help='The output format.')
-def export_beacon_blocks(start_block, end_block, provider_uri, max_workers, output_dir, output_format):
-    ethereum2_service = Ethereum2Service(ThreadLocalProxy(lambda: Ethereum2TekuApi(provider_uri)))
+def export_beacon_blocks(start_block, end_block, provider_uri, rate_limit, max_workers, output_dir, output_format):
+    api = build_api(provider_uri, rate_limit)
+    ethereum2_service = Ethereum2Service(api)
+
     job = ExportBeaconBlocksJob(
         start_block=start_block,
         end_block=end_block,

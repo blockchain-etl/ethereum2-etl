@@ -71,7 +71,6 @@ class ExportBeaconBlocksJob(BaseJob):
                 beacon_block = self.beacon_block_mapper.create_skipped_beacon_block(slot)
 
             self.item_exporter.export_item(self.beacon_block_mapper.beacon_block_to_dict(beacon_block))
-            time.sleep(0.1)
 
     def _end(self):
         self.batch_work_executor.shutdown()

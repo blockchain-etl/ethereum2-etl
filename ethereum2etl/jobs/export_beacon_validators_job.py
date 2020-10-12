@@ -73,7 +73,6 @@ class ExportBeaconValidatorsJob(BaseJob):
         for validator_response in validators_response.get('validators'):
             validator = self.validator_mapper.json_dict_to_validator(validator_response)
             self.item_exporter.export_item(self.validator_mapper.validator_to_dict(validator))
-            time.sleep(0.1)
 
     def _end(self):
         self.batch_work_executor.shutdown()
