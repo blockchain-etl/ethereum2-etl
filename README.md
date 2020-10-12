@@ -21,11 +21,9 @@ Install Ethereum 2.0 ETL:
 pip install ethereum2-etl
 ```
 
-Export beacon blocks (
-[JSON Schema](docs/schema.md#beacon_blocksjson), 
+Export beacon blocks ([JSON Schema](docs/schema.md#beacon_blocksjson), 
 [CSV Schema](docs/schema.md#beacon_blockscsv), 
-[Reference](docs/commands.md#export_beacon_blocks)
-):
+[Reference](docs/commands.md#export_beacon_blocks)):
 
 ```bash
 > ethereum2etl export_beacon_blocks --start-block 0 --end-block 200 \
@@ -33,11 +31,9 @@ Export beacon blocks (
 --provider-uri https://projectid:secret@medalla.infura.io
 ```
 
-Export beacon validators (
-[JSON Schema](docs/schema.md#beacon_validatorsjson), 
+Export beacon validators ([JSON Schema](docs/schema.md#beacon_validatorsjson), 
 [CSV Schema](docs/schema.md#beacon_validatorscsv), 
-[Reference](docs/commands.md#export_beacon_validators)
-):
+[Reference](docs/commands.md#export_beacon_validators)):
 
 ```bash
 > ethereum2etl export_beacon_validtors --epoch 10 \
@@ -45,11 +41,9 @@ Export beacon validators (
 --provider-uri https://projectid:secret@medalla.infura.io
 ```
 
-Export beacon committees (
-[JSON Schema](docs/schema.md#beacon_committeesjson), 
+Export beacon committees ([JSON Schema](docs/schema.md#beacon_committeesjson), 
 [CSV Schema](docs/schema.md#beacon_committeescsv), 
-[Reference](docs/commands.md#export_beacon_committees)
-):
+[Reference](docs/commands.md#export_beacon_committees)):
 
 ```bash
 > ethereum2etl export_beacon_committees --start-epoch 0 --end-epoch 10 \
