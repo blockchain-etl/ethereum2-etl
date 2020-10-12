@@ -63,7 +63,7 @@ class BeaconBlockMapper(object):
         eth1_data = body.get('eth1_data')
         block.eth1_block_hash = eth1_data.get('block_hash')
         block.eth1_deposit_root = eth1_data.get('deposit_root')
-        block.eth1_deposit_count = eth1_data.get('eth1_deposit_count')
+        block.eth1_deposit_count = to_int(eth1_data.get('deposit_count'))
 
         block.signature = json_dict.get('beacon_block', EMPTY_OBJECT).get('signature')
 

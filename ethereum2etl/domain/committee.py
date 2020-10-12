@@ -24,6 +24,7 @@
 class Committee(object):
     def __init__(self):
         self.epoch = None
+        self.epoch_timestamp = None
         self.slot = None
         self.index = None
         self.committee = []

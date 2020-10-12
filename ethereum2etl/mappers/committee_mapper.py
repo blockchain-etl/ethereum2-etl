@@ -22,7 +22,9 @@
 
 
 from ethereum2etl.domain.committee import Committee
+from ethereum2etl.utils.ethereum2_utils import compute_timestamp_at_epoch
 from ethereum2etl.utils.string_utils import to_int
+from ethereum2etl.utils.timestamp_utils import format_timestamp
 
 
 class CommitteeMapper(object):
@@ -30,6 +32,7 @@ class CommitteeMapper(object):
         committee = Committee()
 
         committee.epoch = epoch
+        committee.epoch_timestamp = format_timestamp(compute_timestamp_at_epoch(epoch))
         committee.slot = to_int(json_dict.get('slot'))
         committee.index = to_int(json_dict.get('index'))
         committee.committee = json_dict.get('committee')
