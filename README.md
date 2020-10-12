@@ -21,7 +21,7 @@ Install Ethereum 2.0 ETL:
 pip install ethereum2-etl
 ```
 
-Export beacon blocks ([JSON Schema](docs/schema.md#beacon_blocksjson), 
+Export beacon blocks, attestations, deposits, proposer slashings, attester slashings, voluntary exits ([JSON Schema](docs/schema.md#beacon_blocksjson), 
 [CSV Schema](docs/schema.md#beacon_blockscsv), 
 [Reference](docs/commands.md#export_beacon_blocks)):
 
