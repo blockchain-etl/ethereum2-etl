@@ -90,8 +90,8 @@ class BeaconBlockMapper(object):
 
         epoch = compute_epoch_at_slot(slot)
 
-        block.slot = slot
-        block.epoch = epoch
+        block.block_slot = slot
+        block.block_epoch = epoch
         block.block_timestamp = format_timestamp(compute_time_at_slot(slot))
 
         return block
