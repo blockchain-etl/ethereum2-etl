@@ -21,6 +21,8 @@ Install Ethereum 2.0 ETL:
 pip install ethereum2-etl
 ```
 
+Sync your own node or request access to node on [Infura](https://blog.infura.io/checking-your-eth-2-0-validator-balance/).
+
 Export beacon blocks, attestations, deposits, proposer slashings, attester slashings, voluntary exits ([JSON Schema](docs/schema.md#beacon_blocksjson), 
 [CSV Schema](docs/schema.md#beacon_blockscsv), 
 [Reference](docs/commands.md#export_beacon_blocks)):
