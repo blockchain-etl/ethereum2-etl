@@ -11,7 +11,12 @@ Data is available for you to query right away in [Google BigQuery](https://conso
 Easily export:
 
 * Beacon Blocks
+* Attestations
+* Deposits
+* Proposer Slashings
+* Attester Slashings
 * Validators
+* Committees
 
 ## Projects using Ethereum 2.0 ETL
 

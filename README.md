@@ -64,6 +64,7 @@ For the latest version, check out the repo and call
 - [Schema](https://ethereum2-etl.readthedocs.io/en/latest/schema/)
 - [Command Reference](https://ethereum2-etl.readthedocs.io/en/latest/commands/)
 - [Documentation](https://ethereum2-etl.readthedocs.io/)
+- [Airflow DAGs](https://github.com/blockchain-etl/ethereum2-etl-airflow)
 
 ## Running Tests
 
