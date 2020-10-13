@@ -10,7 +10,7 @@ def read(fname):
 long_description = read('README.md') if os.path.isfile("README.md") else ""
 
 setup(
-    name='ethereum-etl',
+    name='ethereum2-etl',
     version='0.0.1',
     author='Evgeny Medvedev',
     author_email='evge.medvedev@gmail.com',
