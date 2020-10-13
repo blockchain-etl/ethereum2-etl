@@ -30,7 +30,7 @@ class AttestationMapper(object):
     def json_dict_to_attestation(self, json_dict):
         attestation = Attestation()
 
-        attestation.aggregation_bits = to_binary(json_dict.get('aggregation_bits'))
+        attestation.aggregation_bits = hex_to_aggregation_bits(json_dict.get('aggregation_bits'))
 
         data = json_dict.get('data', EMPTY_OBJECT)
         attestation.slot = to_int(data.get('slot'))
@@ -58,12 +58,26 @@ class AttestationMapper(object):
 EMPTY_OBJECT = {}
 
 
+def hex_to_aggregation_bits(hex_aggregation_bits):
+    aggregation_bits = to_binary(hex_aggregation_bits)
+    if len(aggregation_bits) >= 1:
+        # The first set bit indicates the start of aggregation bits
+        # The binary string returned by to_binary() always starts with 1
+        aggregation_bits = aggregation_bits[1:]
+    return aggregation_bits
+
+
 def to_binary(hex_data):
     if hex_data is None or len(hex_data) == 0:
         return hex_data
 
-    binary = bin(int(hex_data, 16))
-    # trim 0b
-    if len(binary) >= 2:
+    if hex_data.startswith('0x'):
+        hex_data = hex_data[2:]
+
+    b = bytearray.fromhex(hex_data)
+
+    binary = bin(int.from_bytes(b, byteorder='little'))
+
+    if binary is not None and binary.startswith('0b'):
         binary = binary[2:]
     return binary
