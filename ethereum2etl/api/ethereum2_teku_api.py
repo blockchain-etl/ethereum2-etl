@@ -28,7 +28,7 @@ from ethereum2etl.api.request import make_get_request
 
 class Ethereum2TekuApi:
 
-    def __init__(self, provider_uri, timeout=60):
+    def __init__(self, provider_uri, timeout=300):
         self.provider_uri = provider_uri
         self.timeout = timeout
 
