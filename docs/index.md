@@ -4,7 +4,7 @@ Ethereum 2.0 ETL lets you convert blockchain data into convenient formats like C
 
 With 700+ likes on Github, Ethereum ETL is the most popular open source project for Ethereum data.
 
-Data is available for you to query right away in [Google BigQuery](https://console.cloud.google.com/bigquery?page=dataset&d=crypto_ethereum2&p=public-data-finance).
+Data is available for you to query right away in [Google BigQuery](https://console.cloud.google.com/bigquery?page=dataset&d=crypto_ethereum2_medalla&p=public-data-finance).
 
 ## Features
 
