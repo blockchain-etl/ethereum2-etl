@@ -39,7 +39,7 @@ class RateLimitingProxy:
             elapsed = time.perf_counter() - self._last_time_called
             left_to_wait = self._min_interval - elapsed + self._wait_buffer
             if left_to_wait > 0:
-                logging.info(f'Waiting {left_to_wait} seconds because of rate limiting')
+                logging.debug(f'Waiting {left_to_wait} seconds because of rate limiting')
                 time.sleep(left_to_wait)
 
             return getattr(self._delegate, name)
