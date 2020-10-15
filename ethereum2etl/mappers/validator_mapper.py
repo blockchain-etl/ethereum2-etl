@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2018 Evgeny Medvedev, evge.medvedev@gmail.com
+# Copyright (c) 2020 Evgeny Medvedev, evge.medvedev@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -38,10 +38,10 @@ class ValidatorMapper(object):
         validator.withdrawal_credentials = json_dict_validator.get('withdrawal_credentials')
         validator.effective_balance = to_int(json_dict_validator.get('effective_balance'))
         validator.slashed = json_dict_validator.get('slashed')
-        validator.activation_eligibility_epoch = to_int(json_dict_validator.get('activation_eligibility_epoch'))
-        validator.activation_epoch = to_int(json_dict_validator.get('activation_epoch'))
-        validator.exit_epoch = to_int(json_dict_validator.get('exit_epoch'))
-        validator.withdrawable_epoch = to_int(json_dict_validator.get('withdrawable_epoch'))
+        validator.activation_eligibility_epoch = json_dict_validator.get('activation_eligibility_epoch')
+        validator.activation_epoch = json_dict_validator.get('activation_epoch')
+        validator.exit_epoch = json_dict_validator.get('exit_epoch')
+        validator.withdrawable_epoch = json_dict_validator.get('withdrawable_epoch')
 
         return validator
 

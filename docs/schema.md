@@ -91,10 +91,10 @@ balance: integer
 withdrawal_credentials: string
 effective_balance: integer
 slashed: boolean
-activation_eligibility_epoch: integer
-activation_epoch: integer
-exit_epoch: integer
-withdrawable_epoch: integer
+activation_eligibility_epoch: string
+activation_epoch: string
+exit_epoch: string
+withdrawable_epoch: string
 ```
 
 ## beacon_validators.csv
