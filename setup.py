@@ -11,7 +11,7 @@ long_description = read('README.md') if os.path.isfile("README.md") else ""
 
 setup(
     name='ethereum2-etl',
-    version='0.0.4',
+    version='0.0.5',
     author='Evgeny Medvedev',
     author_email='evge.medvedev@gmail.com',
     description='Tools for exporting Ethereum 2.0 blockchain data to CSV and JSON',

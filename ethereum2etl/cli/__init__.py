@@ -29,7 +29,7 @@ from ethereum2etl.cli.get_epoch_range_for_date import get_epoch_range_for_date
 
 
 @click.group()
-@click.version_option(version='0.0.4')
+@click.version_option(version='0.0.5')
 @click.pass_context
 def cli(ctx):
     pass
