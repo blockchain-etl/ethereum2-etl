@@ -51,7 +51,9 @@ Export beacon committees ([JSON Schema](docs/schema.md#beacon_committeesjson),
 --provider-uri https://projectid:secret@medalla.infura.io
 ```
 
-Find other commands [here](https://ethereum2-etl.readthedocs.io/en/latest/commands/).
+Find other commands [here](https://ethereum2-etl.readthedocs.io/en/latest/commands/). 
+Read [this article](https://research.nansen.ai/ethereum-2-0-etl-and-medalla-data-in-google-bigquery/) for 
+example SQL queries.
 
 For the latest version, check out the repo and call 
 ```bash
@@ -69,7 +71,7 @@ For the latest version, check out the repo and call
 ## Running Tests
 
 ```bash
-> pip install -e .[dev,streaming]
+> pip install -e .[dev]
 > export ETHEREUM2_ETL_RUN_SLOW_TESTS=True
 > pytest -vv
 ```
