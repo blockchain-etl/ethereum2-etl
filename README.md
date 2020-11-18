@@ -102,3 +102,4 @@ For the latest version, check out the repo and call
 
 * [Google](https://goo.gl/oY5BCQ) - Public BigQuery Ethereum datasets
 * [Nansen](https://nansen.ai/?ref=ethereum2etl) - Blockchain analytics platform
+* [Medalla Data Challenge](https://blog.ethereum.org/2020/11/17/medalla-data-challenge-results/) - analyses of the Ethereum 2.0 blockchain
