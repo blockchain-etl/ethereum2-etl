@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2020 Evgeny Medvedev, evge.medvedev@gmail.com
+# Copyright (c) 2018 Evgeny Medvedev, evge.medvedev@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,16 @@
 # SOFTWARE.
 
 
-from ethereum2etl.domain.committee import Committee
-from ethereum2etl.utils.string_utils import to_int
-from ethereum2etl.utils.timestamp_utils import format_timestamp
+import os
+
+import pytest
 
 
-class CommitteeMapper(object):
-    def json_dict_to_committee(self, json_dict, epoch, timestamp):
-        committee = Committee()
-
-        committee.epoch = epoch
-        committee.epoch_timestamp = format_timestamp(timestamp)
-        committee.slot = to_int(json_dict.get('slot'))
-        committee.index = to_int(json_dict.get('index'))
-        committee.committee = json_dict.get('validators')
-
-        return committee
-
-    def committee_to_dict(self, committee: Committee):
-        return {
-            **{
-                'item_type': 'beacon_committee',
-            },
-            **vars(committee)
-        }
+def run_slow_tests():
+    provider_uri_variable = os.environ.get('ETHEREUM2ETL_PROVIDER_URI', '')
+    return provider_uri_variable is not None and len(provider_uri_variable) > 0
 
 
-EMPTY_OBJECT = {}
+def skip_if_slow_tests_disabled(data):
+    return pytest.param(*data, marks=pytest.mark.skipif(not run_slow_tests(),
+                                                        reason='Skipping slow running tests'))

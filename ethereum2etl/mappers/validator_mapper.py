@@ -31,8 +31,8 @@ class ValidatorMapper(object):
 
         json_dict_validator = json_dict.get('validator')
 
-        validator.pubkey = json_dict.get('pubkey')
-        validator.validator_index = json_dict.get('validator_index')
+        validator.pubkey = json_dict_validator.get('pubkey')
+        validator.validator_index = json_dict.get('index')
         validator.balance = to_int(json_dict.get('balance'))
 
         validator.withdrawal_credentials = json_dict_validator.get('withdrawal_credentials')
@@ -42,6 +42,7 @@ class ValidatorMapper(object):
         validator.activation_epoch = json_dict_validator.get('activation_epoch')
         validator.exit_epoch = json_dict_validator.get('exit_epoch')
         validator.withdrawable_epoch = json_dict_validator.get('withdrawable_epoch')
+        validator.status = json_dict.get('status')
 
         return validator
 

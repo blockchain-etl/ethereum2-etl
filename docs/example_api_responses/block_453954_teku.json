@@ -1,6 +1,5 @@
 {
-    "root": "0xa0838192ad28b3d67289e3fd5bd2bc91c05e12a956edac573acb787b702a8c6f",
-    "beacon_block": {
+    "data": {
         "message": {
             "slot": "453954",
             "proposer_index": "62608",

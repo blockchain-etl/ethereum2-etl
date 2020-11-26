@@ -20,16 +20,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from requests import HTTPError
+from ethereum2etl.utils.string_utils import to_int
+from datetime import datetime
+
+
+SECONDS_PER_SLOT = 12
+SLOTS_PER_EPOCH = 32
+
 
 class Ethereum2Service(object):
     def __init__(self, ethereum2_teku_api):
         self.ethereum2_teku_api = ethereum2_teku_api
+        self.genesis_time = None
 
     def get_beacon_block(self, slot):
         return self.ethereum2_teku_api.get_beacon_block(slot)
 
-    def get_beacon_validators(self, epoch, page_number, page_size=100):
-        return self.ethereum2_teku_api.get_beacon_validators(epoch=epoch, page_token=page_number, page_size=page_size)
+    def get_beacon_validators(self):
+        return self.ethereum2_teku_api.get_beacon_validators()
 
     def get_beacon_committees(self, epoch):
         return self.ethereum2_teku_api.get_beacon_committees(epoch=epoch)
@@ -39,10 +48,62 @@ class Ethereum2Service(object):
             return []
 
         for slot in slot_batch:
-            block_response = self.get_beacon_block(slot)
-            returned_slot = block_response.get('beacon_block').get('message').get('slot')
-            # Teku returns latest non-skipped block
-            if returned_slot is None or int(returned_slot) != slot:
-                yield None
-            else:
+            try:
+                block_response = self.get_beacon_block(slot)
                 yield block_response
+            except HTTPError as e:
+                if e.response.status_code == 404:
+                    yield None
+
+    def compute_time_at_slot(self, slot):
+        if slot is None:
+            return None
+
+        timestamp = self.get_genesis_time() + int(slot) * SECONDS_PER_SLOT
+        return timestamp
+
+    def compute_timestamp_at_epoch(self, epoch):
+        slot = self.compute_slot_at_epoch(epoch)
+        ts = self.compute_time_at_slot(slot)
+        return ts
+
+    def compute_slot_at_epoch(self, epoch):
+        """
+        Return the epoch number at ``slot``.
+        """
+        return epoch * SLOTS_PER_EPOCH
+
+    def compute_slot_at_timestamp(self, ts):
+        if ts is None:
+            return None
+
+        slot_with_fractions = self.compute_slot_with_fractions_at_timestamp(ts)
+        return int(slot_with_fractions)
+
+    def compute_slot_with_fractions_at_timestamp(self, ts):
+        if ts is None:
+            return None
+
+        if isinstance(ts, datetime):
+            ts = ts.timestamp()
+
+        slot = (ts - self.get_genesis_time()) / SECONDS_PER_SLOT
+        return slot
+
+    def compute_epoch_at_timestamp(self, ts):
+        slot = self.compute_slot_at_timestamp(ts)
+        epoch = self.compute_epoch_at_slot(slot)
+        return epoch
+
+    def compute_epoch_at_slot(self, slot):
+        """
+        Return the epoch number at ``slot``.
+        """
+        return slot // SLOTS_PER_EPOCH
+
+    def get_genesis_time(self):
+        if self.genesis_time is None:
+            genesis = self.ethereum2_teku_api.get_beacon_genesis()
+            self.genesis_time = to_int(genesis['data']['genesis_time'])
+        return self.genesis_time
+

@@ -1,3 +1,5 @@
+New API: https://consensys.github.io/teku/
+
 # Chainhead
 
 - https://api.prylabs.net/eth/v1alpha1/beacon/chainhead
