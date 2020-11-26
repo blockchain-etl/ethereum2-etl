@@ -54,6 +54,8 @@ class Ethereum2Service(object):
             except HTTPError as e:
                 if e.response.status_code == 404:
                     yield None
+                else:
+                    raise e
 
     def compute_time_at_slot(self, slot):
         if slot is None:
