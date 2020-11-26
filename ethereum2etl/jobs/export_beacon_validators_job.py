@@ -32,14 +32,9 @@ from ethereum2etl.mappers.validator_mapper import ValidatorMapper
 class ExportBeaconValidatorsJob(BaseJob):
     def __init__(
             self,
-            epoch,
             ethereum2_service,
             max_workers,
-            item_exporter,
-            batch_size=100):
-        self.epoch = epoch
-
-        self.batch_size=batch_size
+            item_exporter):
         self.batch_work_executor = BatchWorkExecutor(1, max_workers)
         self.item_exporter = item_exporter
 
@@ -51,26 +46,16 @@ class ExportBeaconValidatorsJob(BaseJob):
         self.item_exporter.open()
 
     def _export(self):
-        validators_response = self.ethereum2_service.get_beacon_validators(self.epoch, page_number=0, page_size=1)
-        total_size = validators_response.get('total_size')
-        if total_size is None:
-            raise ValueError(f'total_size is empty in validators_response for epoch {self.epoch}')
-        total_pages = math.floor(total_size / self.batch_size)
-
         self.batch_work_executor.execute(
-            range(0, total_pages),
+            range(0, 1),
             self._export_batch,
-            total_items=total_pages
+            total_items=1
         )
 
-    def _export_batch(self, validator_pages_batch):
-        assert len(validator_pages_batch) == 1
-        page_number = validator_pages_batch[0]
+    def _export_batch(self, _):
+        validators_response = self.ethereum2_service.get_beacon_validators()
 
-        validators_response = self.ethereum2_service.get_beacon_validators(
-            self.epoch, page_number=page_number, page_size=self.batch_size)
-
-        for validator_response in validators_response.get('validators'):
+        for validator_response in validators_response['data']:
             validator = self.validator_mapper.json_dict_to_validator(validator_response)
             self.item_exporter.export_item(self.validator_mapper.validator_to_dict(validator))
 

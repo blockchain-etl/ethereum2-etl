@@ -72,7 +72,7 @@ For the latest version, check out the repo and call
 
 ```bash
 > pip install -e .[dev]
-> export ETHEREUM2_ETL_RUN_SLOW_TESTS=True
+> export ETHEREUM2ETL_PROVIDER_URI=https://projectid:secret@medalla.infura.io
 > pytest -vv
 ```
 

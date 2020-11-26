@@ -64,9 +64,11 @@ class ExportBeaconCommitteesJob(BaseJob):
 
     def _export_epoch(self, epoch):
         committees_response = self.ethereum2_service.get_beacon_committees(epoch)
+        data = committees_response['data']
 
-        for committee_response in committees_response:
-            committee = self.committee_mapper.json_dict_to_committee(committee_response, epoch=epoch)
+        for committee_response in data:
+            timestamp = self.ethereum2_service.compute_timestamp_at_epoch(epoch)
+            committee = self.committee_mapper.json_dict_to_committee(committee_response, epoch=epoch, timestamp=timestamp)
             self.item_exporter.export_item(self.committee_mapper.committee_to_dict(committee))
 
     def _end(self):

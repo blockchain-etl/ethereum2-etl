@@ -24,11 +24,11 @@ from datetime import datetime, timezone
 
 from blockchainetl_common.graph.graph_operations import OutOfBoundsError
 
-from ethereum2etl.utils.ethereum2_utils import compute_epoch_at_timestamp, \
-    compute_timestamp_at_epoch
-
 
 class Ethereum2EpochRangeService(object):
+
+    def __init__(self, ethereum2_service):
+        self.ethereum2_service = ethereum2_service
 
     def get_epoch_range_for_date(self, date):
         start_datetime = datetime.combine(date, datetime.min.time().replace(tzinfo=timezone.utc))
@@ -41,8 +41,8 @@ class Ethereum2EpochRangeService(object):
         if start_timestamp > end_timestamp:
             raise ValueError('start_timestamp must be greater or equal to end_timestamp')
 
-        start_epoch = compute_epoch_at_timestamp(start_timestamp)
-        end_epoch = compute_epoch_at_timestamp(end_timestamp)
+        start_epoch = self.ethereum2_service.compute_epoch_at_timestamp(start_timestamp)
+        end_epoch = self.ethereum2_service.compute_epoch_at_timestamp(end_timestamp)
 
         if start_epoch < 0 and end_epoch < 0:
             raise OutOfBoundsError('The given timestamp range does not cover any epochs')
@@ -53,7 +53,8 @@ class Ethereum2EpochRangeService(object):
         if end_epoch < 0:
             end_epoch = 0
 
-        if compute_timestamp_at_epoch(start_epoch) < start_timestamp:
+        timestamp_at_epoch = self.ethereum2_service.compute_timestamp_at_epoch(start_epoch)
+        if timestamp_at_epoch < start_timestamp:
             start_epoch += 1
 
         return start_epoch, end_epoch

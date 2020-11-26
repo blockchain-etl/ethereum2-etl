@@ -27,7 +27,6 @@ from ethereum2etl.mappers.attester_slashing_mapper import AttesterSlashingMapper
 from ethereum2etl.mappers.deposit_mapper import DepositMapper
 from ethereum2etl.mappers.proposer_slashing_mapper import ProposerSlashingMapper
 from ethereum2etl.mappers.voluntary_exit_mapper import VoluntaryExitMapper
-from ethereum2etl.utils.ethereum2_utils import compute_epoch_at_slot, compute_time_at_slot
 from ethereum2etl.utils.string_utils import to_int
 from ethereum2etl.utils.timestamp_utils import format_timestamp
 
@@ -40,16 +39,15 @@ class BeaconBlockMapper(object):
         self.attester_slashing_mapper = AttesterSlashingMapper()
         self.voluntary_exit_mapper = VoluntaryExitMapper()
 
-    def json_dict_to_beacon_block(self, json_dict):
+    def json_dict_to_beacon_block(self, json_dict, timestamp, epoch):
         block = BeaconBlock()
 
-        message = json_dict.get('beacon_block', EMPTY_OBJECT).get('message', EMPTY_OBJECT)
+        message = json_dict.get('data', EMPTY_OBJECT).get('message', EMPTY_OBJECT)
 
         slot = to_int(message.get('slot'))
-        epoch = compute_epoch_at_slot(slot)
         block.block_slot = to_int(slot)
         block.block_epoch = epoch
-        block.block_timestamp = format_timestamp(compute_time_at_slot(slot))
+        block.block_timestamp = format_timestamp(timestamp)
         block.proposer_index = to_int(message.get('proposer_index'))
 
         block.block_root = json_dict.get('root')
@@ -84,15 +82,13 @@ class BeaconBlockMapper(object):
 
         return block
 
-    def create_skipped_beacon_block(self, slot):
+    def create_skipped_beacon_block(self, slot, timestamp, epoch):
         block = BeaconBlock()
         block.skipped = True
 
-        epoch = compute_epoch_at_slot(slot)
-
         block.block_slot = slot
         block.block_epoch = epoch
-        block.block_timestamp = format_timestamp(compute_time_at_slot(slot))
+        block.block_timestamp = format_timestamp(timestamp)
 
         return block
 

@@ -33,13 +33,16 @@ class Ethereum2TekuApi:
         self.timeout = timeout
 
     def get_beacon_block(self, slot):
-        return self.get(f'/beacon/block?slot={slot}')
+        return self.get(f'/eth/v1/beacon/blocks/{slot}')
 
-    def get_beacon_validators(self, epoch, page_token, page_size):
-        return self.get(f'/beacon/validators?epoch={epoch}&pageToken={page_token}&pageSize={page_size}')
+    def get_beacon_validators(self):
+        return self.get(f'/eth/v1/beacon/states/head/validators')
 
     def get_beacon_committees(self, epoch):
-        return self.get(f'/beacon/committees?epoch={epoch}')
+        return self.get(f'/eth/v1/beacon/states/head/committees?epoch={epoch}')
+
+    def get_beacon_genesis(self):
+        return self.get(f'/eth/v1/beacon/genesis')
 
     def get(self, endpoint):
         raw_response = make_get_request(
