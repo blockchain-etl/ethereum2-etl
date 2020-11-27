@@ -24,12 +24,13 @@ import pytest
 from dateutil.parser import parse
 
 from ethereum2etl.service.ethereum2_block_range_service import Ethereum2BlockRangeService
+from tests.ethereum2etl.helpers import get_new_eth2_service, skip_if_slow_tests_disabled
 
 
 @pytest.mark.parametrize("date,expected_start_block,expected_end_block", [
-    ['2020-08-04', 0, 3299],
-    ['2020-08-05', 3300, 10499],
-    ['2020-10-05', 442500, 449699],
+    skip_if_slow_tests_disabled(['2020-08-04', 0, 3299]),
+    skip_if_slow_tests_disabled(['2020-08-05', 3300, 10499]),
+    skip_if_slow_tests_disabled(['2020-10-05', 442500, 449699]),
 ])
 def test_get_block_range_for_date(date, expected_start_block, expected_end_block):
     ethereum2_block_range_service = get_new_ethereum2_block_range_service()
@@ -39,4 +40,6 @@ def test_get_block_range_for_date(date, expected_start_block, expected_end_block
 
 
 def get_new_ethereum2_block_range_service():
-    return Ethereum2BlockRangeService()
+    return Ethereum2BlockRangeService(get_new_eth2_service())
+
+

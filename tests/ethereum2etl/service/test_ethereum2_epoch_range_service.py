@@ -19,15 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
 
 import pytest
 from dateutil.parser import parse
 
-from ethereum2etl.api.ethereum2_teku_api import Ethereum2TekuApi
 from ethereum2etl.service.ethereum2_epoch_range_service import Ethereum2EpochRangeService
-from ethereum2etl.service.ethereum2_service import Ethereum2Service
-from tests.ethereum2etl.helpers import skip_if_slow_tests_disabled
+from tests.ethereum2etl.helpers import skip_if_slow_tests_disabled, get_new_eth2_service
 
 
 @pytest.mark.parametrize("date,expected_start_epoch,expected_end_epoch", [
@@ -45,16 +42,3 @@ def test_get_block_range_for_date(date, expected_start_epoch, expected_end_epoch
 
 def get_new_ethereum2_block_range_service():
     return Ethereum2EpochRangeService(get_new_eth2_service())
-
-
-def get_new_eth2_service():
-    return Ethereum2Service(get_api())
-
-
-def get_api():
-    env_variable_name = "ETHEREUM2ETL_PROVIDER_URI"
-    provider_uri = os.environ.get(env_variable_name)
-    if provider_uri is None or len(provider_uri) == 0:
-        raise ValueError('{} is required environment variable'.format(env_variable_name))
-
-    return Ethereum2TekuApi(provider_uri)

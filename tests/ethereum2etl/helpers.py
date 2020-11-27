@@ -25,6 +25,9 @@ import os
 
 import pytest
 
+from ethereum2etl.api.ethereum2_teku_api import Ethereum2TekuApi
+from ethereum2etl.service.ethereum2_service import Ethereum2Service
+
 
 def run_slow_tests():
     provider_uri_variable = os.environ.get('ETHEREUM2ETL_PROVIDER_URI', '')
@@ -34,3 +37,16 @@ def run_slow_tests():
 def skip_if_slow_tests_disabled(data):
     return pytest.param(*data, marks=pytest.mark.skipif(not run_slow_tests(),
                                                         reason='Skipping slow running tests'))
+
+
+def get_new_eth2_service():
+    return Ethereum2Service(get_api())
+
+
+def get_api():
+    env_variable_name = "ETHEREUM2ETL_PROVIDER_URI"
+    provider_uri = os.environ.get(env_variable_name)
+    if provider_uri is None or len(provider_uri) == 0:
+        raise ValueError('{} is required environment variable'.format(env_variable_name))
+
+    return Ethereum2TekuApi(provider_uri)
