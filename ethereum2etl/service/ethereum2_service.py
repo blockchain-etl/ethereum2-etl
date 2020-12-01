@@ -19,6 +19,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import decimal
+import json
 
 from requests import HTTPError
 from ethereum2etl.utils.string_utils import to_int
@@ -53,7 +55,15 @@ class Ethereum2Service(object):
                 yield block_response
             except HTTPError as e:
                 if e.response.status_code == 404:
-                    yield None
+                    if e.response and e.response.content:
+                        content = e.response.content.decode('utf-8')
+                        parsed = json.loads(content, parse_float=decimal.Decimal)
+                        if parsed.get('status') == 404:
+                            yield None
+                        else:
+                            yield 'non-existent'
+                    else:
+                        yield 'non-existent'
                 else:
                     raise e
 

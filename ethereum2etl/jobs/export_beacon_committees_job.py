@@ -19,11 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
+import logging
 import time
 
 from blockchainetl_common.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl_common.jobs.base_job import BaseJob
+from requests import HTTPError
 
 from ethereum2etl.mappers.committee_mapper import CommitteeMapper
 
@@ -63,7 +64,15 @@ class ExportBeaconCommitteesJob(BaseJob):
             self._export_epoch(epoch)
 
     def _export_epoch(self, epoch):
-        committees_response = self.ethereum2_service.get_beacon_committees(epoch)
+        try:
+            committees_response = self.ethereum2_service.get_beacon_committees(epoch)
+        except HTTPError as e:
+            if e.response.status_code == 400:
+                logging.info(f'Committee for epoch {epoch} was skipped')
+                return
+            else:
+                raise e
+
         data = committees_response['data']
 
         for committee_response in data:

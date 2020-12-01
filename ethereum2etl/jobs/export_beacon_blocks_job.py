@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import logging
 
 from blockchainetl_common.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl_common.jobs.base_job import BaseJob
@@ -61,6 +62,9 @@ class ExportBeaconBlocksJob(BaseJob):
         responses = list(self.ethereum2_service.get_beacon_blocks(slot_batch))
         assert len(slot_batch) == len(responses)
         for slot, response in zip(slot_batch, responses):
+            if response == 'non-existent':
+                logging.info(f'slot {slot} was skipped')
+                return
             timestamp = self.ethereum2_service.compute_time_at_slot(slot)
             epoch = self.ethereum2_service.compute_epoch_at_slot(slot)
             if response is not None:
