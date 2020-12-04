@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import math
-import time
+import logging
 
 from blockchainetl_common.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl_common.jobs.base_job import BaseJob
@@ -32,9 +31,14 @@ from ethereum2etl.mappers.validator_mapper import ValidatorMapper
 class ExportBeaconValidatorsJob(BaseJob):
     def __init__(
             self,
+            epoch,
             ethereum2_service,
             max_workers,
-            item_exporter):
+            item_exporter,
+            batch_size=100):
+        self.epoch = epoch
+
+        self.batch_size=batch_size
         self.batch_work_executor = BatchWorkExecutor(1, max_workers)
         self.item_exporter = item_exporter
 
@@ -52,11 +56,15 @@ class ExportBeaconValidatorsJob(BaseJob):
             total_items=1
         )
 
-    def _export_batch(self, _):
-        validators_response = self.ethereum2_service.get_beacon_validators()
+    def _export_batch(self, validator_pages_batch):
+        slot = self.ethereum2_service.compute_slot_at_epoch(self.epoch)
+        logging.info(f'Slot for epoch {self.epoch} is {slot}')
+        validators_response = self.ethereum2_service.get_beacon_validators(slot)
+
+        timestamp = self.ethereum2_service.compute_time_at_slot(slot)
 
         for validator_response in validators_response['data']:
-            validator = self.validator_mapper.json_dict_to_validator(validator_response)
+            validator = self.validator_mapper.json_dict_to_validator(validator_response, timestamp)
             self.item_exporter.export_item(self.validator_mapper.validator_to_dict(validator))
 
     def _end(self):

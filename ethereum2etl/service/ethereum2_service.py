@@ -39,8 +39,8 @@ class Ethereum2Service(object):
     def get_beacon_block(self, slot):
         return self.ethereum2_teku_api.get_beacon_block(slot)
 
-    def get_beacon_validators(self):
-        return self.ethereum2_teku_api.get_beacon_validators()
+    def get_beacon_validators(self, slot):
+        return self.ethereum2_teku_api.get_beacon_validators(slot)
 
     def get_beacon_committees(self, epoch):
         return self.ethereum2_teku_api.get_beacon_committees(epoch=epoch)
@@ -55,15 +55,7 @@ class Ethereum2Service(object):
                 yield block_response
             except HTTPError as e:
                 if e.response.status_code == 404:
-                    if e.response and e.response.content:
-                        content = e.response.content.decode('utf-8')
-                        parsed = json.loads(content, parse_float=decimal.Decimal)
-                        if parsed.get('status') == 404:
-                            yield None
-                        else:
-                            yield 'non-existent'
-                    else:
-                        yield 'non-existent'
+                    yield None
                 else:
                     raise e
 

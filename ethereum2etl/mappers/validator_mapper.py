@@ -23,14 +23,16 @@
 
 from ethereum2etl.domain.validator import Validator
 from ethereum2etl.utils.string_utils import to_int
+from ethereum2etl.utils.timestamp_utils import format_timestamp
 
 
 class ValidatorMapper(object):
-    def json_dict_to_validator(self, json_dict):
+    def json_dict_to_validator(self, json_dict, timestamp):
         validator = Validator()
 
         json_dict_validator = json_dict.get('validator')
 
+        validator.timestamp = format_timestamp(timestamp)
         validator.pubkey = json_dict_validator.get('pubkey')
         validator.validator_index = json_dict.get('index')
         validator.balance = to_int(json_dict.get('balance'))
