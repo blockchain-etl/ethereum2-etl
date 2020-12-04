@@ -35,8 +35,8 @@ logging_basic_config()
 
 
 @click.command(context_settings=dict(help_option_names=['-h', '--help']))
-@click.option('-e', '--epoch', required=False, type=int,
-              help='Epoch number, if not provided latest epoch number is used.')
+@click.option('-s', '--start-epoch', default=0, show_default=True, type=int, help='Start epoch')
+@click.option('-e', '--end-epoch', required=True, type=int, help='End epoch')
 @click.option('-p', '--provider-uri', default='https://medalla.infura.io', show_default=True, type=str,
               help='The URI of the remote Ethereum 2 node')
 @click.option('-r', '--rate-limit', default=None, show_default=True, type=int,
@@ -45,18 +45,21 @@ logging_basic_config()
 @click.option('-o', '--output-dir', default=None, type=str, help='The output directory for block data.')
 @click.option('-f', '--output-format', default='json', show_default=True, type=click.Choice(['json', 'csv']),
               help='The output format.')
-def export_beacon_validators(epoch, provider_uri, rate_limit, max_workers, output_dir, output_format):
+def export_beacon_validators(start_epoch, end_epoch, provider_uri, rate_limit, max_workers, output_dir, output_format):
     api = build_api(provider_uri, rate_limit)
     ethereum2_service = Ethereum2Service(api)
 
-    if epoch is None:
+    if start_epoch is None and end_epoch is None:
         now = datetime.now()
         epoch = ethereum2_service.compute_epoch_at_timestamp(now)
+        start_epoch = epoch
+        end_epoch = epoch
 
-    logging.info(f'Epoch number is {epoch}')
+    logging.info(f'Start epoch is {start_epoch}, end epoch is {end_epoch}')
 
     job = ExportBeaconValidatorsJob(
-        epoch=epoch,
+        start_epoch=start_epoch,
+        end_epoch=end_epoch,
         ethereum2_service=ethereum2_service,
         max_workers=max_workers,
         item_exporter=Ethereum2ItemExporter(output_dir, output_format=output_format),
