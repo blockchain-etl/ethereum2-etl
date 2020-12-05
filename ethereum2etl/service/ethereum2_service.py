@@ -19,6 +19,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import decimal
+import json
 
 from requests import HTTPError
 from ethereum2etl.utils.string_utils import to_int
@@ -37,8 +39,8 @@ class Ethereum2Service(object):
     def get_beacon_block(self, slot):
         return self.ethereum2_teku_api.get_beacon_block(slot)
 
-    def get_beacon_validators(self):
-        return self.ethereum2_teku_api.get_beacon_validators()
+    def get_beacon_validators(self, slot):
+        return self.ethereum2_teku_api.get_beacon_validators(slot)
 
     def get_beacon_committees(self, epoch):
         return self.ethereum2_teku_api.get_beacon_committees(epoch=epoch)

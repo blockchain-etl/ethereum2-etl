@@ -35,8 +35,8 @@ class Ethereum2TekuApi:
     def get_beacon_block(self, slot):
         return self.get(f'/eth/v1/beacon/blocks/{slot}')
 
-    def get_beacon_validators(self):
-        return self.get(f'/eth/v1/beacon/states/head/validators')
+    def get_beacon_validators(self, slot):
+        return self.get(f'/eth/v1/beacon/states/{slot}/validators')
 
     def get_beacon_committees(self, epoch):
         return self.get(f'/eth/v1/beacon/states/head/committees?epoch={epoch}')

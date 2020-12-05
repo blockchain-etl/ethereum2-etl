@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import math
-import time
+import logging
 
 from blockchainetl_common.executors.batch_work_executor import BatchWorkExecutor
 from blockchainetl_common.jobs.base_job import BaseJob
@@ -32,10 +31,17 @@ from ethereum2etl.mappers.validator_mapper import ValidatorMapper
 class ExportBeaconValidatorsJob(BaseJob):
     def __init__(
             self,
+            start_epoch,
+            end_epoch,
             ethereum2_service,
             max_workers,
-            item_exporter):
-        self.batch_work_executor = BatchWorkExecutor(1, max_workers)
+            item_exporter,
+            batch_size=1):
+        self.start_epoch = start_epoch
+        self.end_epoch = end_epoch
+
+        self.batch_size=batch_size
+        self.batch_work_executor = BatchWorkExecutor(batch_size, max_workers)
         self.item_exporter = item_exporter
 
         self.ethereum2_service = ethereum2_service
@@ -47,16 +53,24 @@ class ExportBeaconValidatorsJob(BaseJob):
 
     def _export(self):
         self.batch_work_executor.execute(
-            range(0, 1),
+            range(self.start_epoch, self.end_epoch + 1),
             self._export_batch,
-            total_items=1
+            total_items=self.end_epoch - self.start_epoch + 1
         )
 
-    def _export_batch(self, _):
-        validators_response = self.ethereum2_service.get_beacon_validators()
+    def _export_batch(self, epoch_batch):
+        for epoch in epoch_batch:
+            self._export_epoch(epoch)
+
+    def _export_epoch(self, epoch):
+        slot = self.ethereum2_service.compute_slot_at_epoch(epoch)
+        logging.info(f'Slot for epoch {epoch} is {slot}')
+        validators_response = self.ethereum2_service.get_beacon_validators(slot)
+
+        timestamp = self.ethereum2_service.compute_time_at_slot(slot)
 
         for validator_response in validators_response['data']:
-            validator = self.validator_mapper.json_dict_to_validator(validator_response)
+            validator = self.validator_mapper.json_dict_to_validator(validator_response, timestamp, epoch)
             self.item_exporter.export_item(self.validator_mapper.validator_to_dict(validator))
 
     def _end(self):
