@@ -33,7 +33,7 @@ class Ethereum2TekuApi:
         self.timeout = timeout
 
     def get_beacon_block(self, slot):
-        return self.get(f'/eth/v1/beacon/blocks/{slot}')
+        return self.get(f'/eth/v2/beacon/blocks/{slot}')
 
     def get_beacon_validators(self):
         return self.get(f'/eth/v1/beacon/states/head/validators')
