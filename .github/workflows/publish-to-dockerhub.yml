@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@master
       - name: Publish to DockerHub
         if: startsWith(github.event.ref, 'refs/tags/v')
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: blockchainetl/ethereum2-etl
           username: ${{ secrets.DOCKER_USERNAME }}
